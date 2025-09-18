@@ -15,10 +15,9 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         messageDiv.textContent = 'Login successful! Redirecting...';
         messageDiv.className = 'message success';
         
-        // Redirect to another page after a short delay
+        // Redirect to the homepage after a short delay
         setTimeout(() => {
-            // You can replace this with your actual redirect URL
-            window.location.href = 'dashboard.html';
+            window.location.href = 'homepage.html';
         }, 1500);
     } else {
         // Show error message
