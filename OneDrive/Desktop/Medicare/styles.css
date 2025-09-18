@@ -164,6 +164,63 @@ body {
     font-size: 1.1rem;
 }
 
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    background: #0083b0;
+    color: white;
+    padding: 1.5rem 2rem;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: center;
+    width: 200px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn i {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+}
+
+.action-btn.patient-btn {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+}
+
+.action-btn.appointment-btn {
+    background: linear-gradient(135deg, #2196F3, #1976D2);
+}
+
+.action-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .action-btn {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
 .dashboard-buttons {
     display: flex;
     flex-wrap: wrap;
