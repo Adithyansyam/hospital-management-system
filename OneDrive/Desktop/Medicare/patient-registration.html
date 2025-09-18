@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Registration - Medicare</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="logo">
+                <h1>Medicare</h1>
+            </div>
+            <div class="user-actions">
+                <a href="homepage.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </header>
+        
+        <main class="registration-main">
+            <div class="registration-container">
+                <h2>Patient Registration</h2>
+                <p class="form-subtitle">Please fill in the patient details below</p>
+                
+                <form id="patientForm" class="registration-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientName">Full Name <span class="required">*</span></label>
+                            <input type="text" id="patientName" name="patientName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Gender <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="gender" value="Male" required> Male
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="gender" value="Female"> Female
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="gender" value="Other"> Other
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dob">Date of Birth <span class="required">*</span></label>
+                            <input type="date" id="dob" name="dob" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bloodGroup">Blood Group</label>
+                            <select id="bloodGroup" name="bloodGroup">
+                                <option value="">Select Blood Group</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="Unknown">Unknown</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">Address <span class="required">*</span></label>
+                        <textarea id="address" name="address" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" required 
+                                   pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="medicalHistory">Previous Medical History (if any)</label>
+                        <textarea id="medicalHistory" name="medicalHistory" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-user-plus"></i> Register Patient
+                        </button>
+                        <button type="reset" class="reset-btn">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+        
+        <footer class="dashboard-footer">
+            <p>&copy; 2025 Medicare. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.getElementById('patientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Form validation
+            const form = e.target;
+            if (!form.checkValidity()) {
+                e.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
+            
+            // Get form data
+            const formData = {
+                patientName: form.patientName.value,
+                gender: form.gender.value,
+                dob: form.dob.value,
+                bloodGroup: form.bloodGroup.value,
+                address: form.address.value,
+                phoneNumber: form.phoneNumber.value,
+                email: form.email.value,
+                medicalHistory: form.medicalHistory.value
+            };
+            
+            // Here you would typically send the data to your server
+            console.log('Form submitted:', formData);
+            
+            // Show success message
+            alert('Patient registered successfully!');
+            
+            // Reset form
+            form.reset();
+            form.classList.remove('was-validated');
+        });
+    </script>
+</body>
+</html>
