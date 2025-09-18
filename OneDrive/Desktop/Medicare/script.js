@@ -9,8 +9,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     messageDiv.textContent = '';
     messageDiv.className = 'message';
     
-    // Check if username is "medicare" (case-insensitive)
-    if (username.toLowerCase() === 'medicare' && password) {
+    // Check if username is "medicare" and password is "Medicare@123" (case-sensitive)
+    if (username === 'medicare' && password === 'Medicare@123') {
         // Show success message
         messageDiv.textContent = 'Login successful! Redirecting...';
         messageDiv.className = 'message success';
