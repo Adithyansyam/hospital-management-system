@@ -81,12 +81,9 @@
 
         /* Main Content */
         .main-content {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 3rem 2rem;
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 3rem;
         }
 
         /* Appointment Form */
@@ -226,49 +223,6 @@
             box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
         }
 
-        /* Appointments List */
-        .appointments-list {
-            background: white;
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 10px 40px rgba(0, 131, 176, 0.08);
-            border: 1px solid rgba(0, 131, 176, 0.1);
-            height: fit-content;
-            position: sticky;
-            top: 2rem;
-        }
-
-        .appointments-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .appointments-title i {
-            color: #0083b0;
-            font-size: 1.25rem;
-        }
-
-        .no-appointments {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #6b7280;
-        }
-
-        .no-appointments i {
-            font-size: 3rem;
-            color: #d1d5db;
-            margin-bottom: 1rem;
-        }
-
-        .no-appointments p {
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
 
         /* Footer */
         .footer {
@@ -283,12 +237,7 @@
         /* Responsive Design */
         @media (max-width: 1024px) {
             .main-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .appointments-list {
-                position: static;
+                padding: 2rem 1.5rem;
             }
         }
 
@@ -421,56 +370,30 @@
                         
                         <div class="form-group">
                             <label for="appointmentTime" class="form-label">
-                                Preferred Time <span class="required">*</span>
+                                Time Slot <span class="required">*</span>
                             </label>
                             <select id="appointmentTime" name="appointmentTime" class="form-select" required>
-                                <option value="">Select time slot</option>
-                                <option value="09:00:00">09:00 AM</option>
-                                <option value="10:00:00">10:00 AM</option>
-                                <option value="11:00:00">11:00 AM</option>
-                                <option value="12:00:00">12:00 PM</option>
-                                <option value="14:00:00">02:00 PM</option>
-                                <option value="15:00:00">03:00 PM</option>
-                                <option value="16:00:00">04:00 PM</option>
-                                <option value="17:00:00">05:00 PM</option>
+                                <option value="">Select a time slot</option>
                             </select>
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="reasonForVisit" class="form-label">
-                            Reason for Visit <span class="required">*</span>
-                        </label>
-                        <textarea id="reasonForVisit" name="reasonForVisit" class="form-textarea" required
-                                 placeholder="Please describe the reason for your visit, symptoms, or any specific concerns..."></textarea>
+                    <div class="form-group full-width">
+                        <label for="reason" class="form-label">Reason for Visit</label>
+                        <textarea id="reason" name="reason" class="form-textarea" rows="3" placeholder="Please describe the reason for your visit"></textarea>
                     </div>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-calendar-check"></i>
-                        Book Appointment
-                    </button>
-                    <button type="reset" class="btn btn-secondary">
-                        <i class="fas fa-undo"></i>
-                        Clear Form
-                    </button>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            <i class="fas fa-undo"></i> Reset Form
+                        </button>
+                    </div>
                 </div>
             </form>
         </section>
-        
-        <aside class="appointments-list">
-            <h3 class="appointments-title">
-                <i class="fas fa-clock"></i>
-                Upcoming Appointments
-            </h3>
-            <div class="appointment-cards" id="appointmentCards">
-                <div class="no-appointments">
-                    <i class="far fa-calendar-check"></i>
-                    <p>No upcoming appointments</p>
-                </div>
-            </div>
-        </aside>
     </main>
     
     <footer class="footer">
@@ -500,23 +423,48 @@
                     throw new Error('Failed to load doctors');
                 }
                 doctors = await response.json();
+                console.log('Loaded doctors:', doctors); // Debug log
                 populateDoctorDropdown();
             } catch (error) {
                 console.error('Error loading doctors:', error);
+                const doctorSelect = document.getElementById('doctorId');
+                if (doctorSelect) {
+                    doctorSelect.innerHTML = '<option value="">Error loading doctors</option>';
+                }
                 showNotification('Failed to load doctors. Please try again later.', 'error');
             }
         }
 
         function populateDoctorDropdown() {
-            const doctorSelect = document.getElementById('doctor');
-            doctorSelect.innerHTML = '<option value="">Select a doctor</option>';
-            
-            doctors.forEach(doctor => {
-                const option = document.createElement('option');
-                option.value = doctor.doctor_id;
-                option.textContent = `${doctor.name} - ${doctor.specialization} (${doctor.department})`;
-                doctorSelect.appendChild(option);
-            });
+            try {
+                const doctorSelect = document.getElementById('doctorId');
+                if (!doctorSelect) {
+                    console.error('Doctor select element not found');
+                    return;
+                }
+                
+                doctorSelect.innerHTML = '<option value="">Select a doctor</option>';
+                
+                if (!doctors || doctors.length === 0) {
+                    console.warn('No doctors found in the database');
+                    doctorSelect.innerHTML = '<option value="">No doctors available</option>';
+                    return;
+                }
+                
+                doctors.forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor.doctor_id;
+                    option.textContent = `${doctor.name} - ${doctor.specialization || 'General'} (${doctor.department || 'General'})`;
+                    doctorSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error populating doctor dropdown:', error);
+                const doctorSelect = document.getElementById('doctorId');
+                if (doctorSelect) {
+                    doctorSelect.innerHTML = '<option value="">Error loading doctors</option>';
+                }
+                showNotification('Error loading doctors. Please try again.', 'error');
+            }
         }
 
         // Show notification function
@@ -563,31 +511,44 @@
         });
         
         function populateDropdowns() {
-            const patientSelect = document.getElementById('patient');
-            const timeSelect = document.getElementById('appointmentTime');
+            try {
+                const patientSelect = document.getElementById('patientId');
+                const timeSelect = document.getElementById('appointmentTime');
+                const doctorSelect = document.getElementById('doctorId');
 
-            // Clear existing options
-            patientSelect.innerHTML = '<option value="">Select a patient</option>';
-            timeSelect.innerHTML = '<option value="">Select a time slot</option>';
+                if (!patientSelect || !timeSelect || !doctorSelect) {
+                    console.error('Required form elements not found');
+                    return;
+                }
 
-            // Populate patients
-            samplePatients.forEach(patient => {
-                const option = document.createElement('option');
-                option.value = patient.id;
-                option.textContent = `${patient.name} (${patient.phone})`;
-                patientSelect.appendChild(option);
-            });
+                // Clear existing options
+                patientSelect.innerHTML = '<option value="">Select a patient</option>';
+                timeSelect.innerHTML = '<option value="">Select a time slot</option>';
+                doctorSelect.innerHTML = '<option value="">Loading doctors...</option>';
 
-            // Populate time slots
-            timeSlots.forEach(time => {
-                const option = document.createElement('option');
-                option.value = time;
-                option.textContent = time;
-                timeSelect.appendChild(option);
-            });
-            
-            // Load doctors from the server
-            loadDoctors();
+                // Add sample patients
+                samplePatients.forEach(patient => {
+                    const option = document.createElement('option');
+                    option.value = patient.id;
+                    option.textContent = `${patient.name} (${patient.phone})`;
+                    patientSelect.appendChild(option);
+                });
+
+                // Add time slots
+                timeSlots.forEach(time => {
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = time;
+                    timeSelect.appendChild(option);
+                });
+
+                // Load doctors
+                loadDoctors();
+
+            } catch (error) {
+                console.error('Error populating dropdowns:', error);
+                showNotification('Error initializing form. Please refresh the page.', 'error');
+            }
         }
         
         function setMinDate() {
