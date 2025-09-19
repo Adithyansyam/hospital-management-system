@@ -24,8 +24,20 @@ CREATE TABLE IF NOT EXISTS patient_registration (
 CREATE TABLE IF NOT EXISTS doctor (
     doctor_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    phone_number VARCHAR(15) NOT NULL UNIQUE,
     department VARCHAR(50) NOT NULL,
+    specialization VARCHAR(100) NOT NULL,
     qualification VARCHAR(100) NOT NULL,
+    experience_years INT,
+    consultation_fee DECIMAL(10,2) NOT NULL,
+    bio TEXT,
+    address TEXT,
+    city VARCHAR(50),
+    state VARCHAR(50),
+    pincode VARCHAR(10),
+    available_days VARCHAR(50),
+    available_time_slot VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -482,42 +482,112 @@
         const samplePatients = [
             { id: 1, name: 'John Doe', phone: '(555) 123-4567' },
             { id: 2, name: 'Jane Smith', phone: '(555) 987-6543' },
-            { id: 3, name: 'Robert Johnson', phone: '(555) 555-1234' },
-            { id: 4, name: 'Emily Davis', phone: '(555) 246-8135' }
+            { id: 3, name: 'Robert Johnson', phone: '(555) 456-7890' }
         ];
-        
-        const sampleDoctors = [
-            { id: 1, name: 'Dr. Sarah Smith', department: 'Cardiology', specialty: 'Heart Specialist' },
-            { id: 2, name: 'Dr. Michael Johnson', department: 'Neurology', specialty: 'Brain & Nerve Specialist' },
-            { id: 3, name: 'Dr. Lisa Williams', department: 'Pediatrics', specialty: 'Child Care Specialist' },
-            { id: 4, name: 'Dr. David Brown', department: 'Orthopedics', specialty: 'Bone & Joint Specialist' }
+
+        const timeSlots = [
+            '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+            '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
         ];
+
+        // Load doctors from the server
+        let doctors = [];
         
-        // Initialize page
+        async function loadDoctors() {
+            try {
+                const response = await fetch('/api/doctors/list');
+                if (!response.ok) {
+                    throw new Error('Failed to load doctors');
+                }
+                doctors = await response.json();
+                populateDoctorDropdown();
+            } catch (error) {
+                console.error('Error loading doctors:', error);
+                showNotification('Failed to load doctors. Please try again later.', 'error');
+            }
+        }
+
+        function populateDoctorDropdown() {
+            const doctorSelect = document.getElementById('doctor');
+            doctorSelect.innerHTML = '<option value="">Select a doctor</option>';
+            
+            doctors.forEach(doctor => {
+                const option = document.createElement('option');
+                option.value = doctor.doctor_id;
+                option.textContent = `${doctor.name} - ${doctor.specialization} (${doctor.department})`;
+                doctorSelect.appendChild(option);
+            });
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+                <button class="notification-close">&times;</button>
+            `;
+            
+            // Add to the notification container
+            const container = document.querySelector('.notification-container');
+            container.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+            
+            // Close button
+            notification.querySelector('.notification-close').addEventListener('click', () => {
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 300);
+            });
+        }
+
+        // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
-            populateDropdowns();
+            // Add notification container if it doesn't exist
+            if (!document.querySelector('.notification-container')) {
+                const container = document.createElement('div');
+                container.className = 'notification-container';
+                document.body.appendChild(container);
+            }
+            
             setMinDate();
+            populateDropdowns();
             initializeForm();
         });
         
         function populateDropdowns() {
-            // Populate patient dropdown
-            const patientSelect = document.getElementById('patientId');
+            const patientSelect = document.getElementById('patient');
+            const timeSelect = document.getElementById('appointmentTime');
+
+            // Clear existing options
+            patientSelect.innerHTML = '<option value="">Select a patient</option>';
+            timeSelect.innerHTML = '<option value="">Select a time slot</option>';
+
+            // Populate patients
             samplePatients.forEach(patient => {
                 const option = document.createElement('option');
                 option.value = patient.id;
-                option.textContent = `${patient.name} - ${patient.phone}`;
+                option.textContent = `${patient.name} (${patient.phone})`;
                 patientSelect.appendChild(option);
             });
-            
-            // Populate doctor dropdown
-            const doctorSelect = document.getElementById('doctorId');
-            sampleDoctors.forEach(doctor => {
+
+            // Populate time slots
+            timeSlots.forEach(time => {
                 const option = document.createElement('option');
-                option.value = doctor.id;
-                option.textContent = `${doctor.name} (${doctor.department})`;
-                doctorSelect.appendChild(option);
+                option.value = time;
+                option.textContent = time;
+                timeSelect.appendChild(option);
             });
+            
+            // Load doctors from the server
+            loadDoctors();
         }
         
         function setMinDate() {
@@ -531,32 +601,47 @@
         function initializeForm() {
             const form = document.getElementById('appointmentForm');
             
-            // Add loading state to submit button on form submission
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const submitBtn = form.querySelector('.btn-primary');
-                const originalText = submitBtn.innerHTML;
+                // Get form data
+                const formData = new FormData(form);
+                const appointmentData = {
+                    patient_id: formData.get('patient'),
+                    doctor_id: formData.get('doctor'),
+                    appointment_date: formData.get('appointmentDate'),
+                    appointment_time: formData.get('appointmentTime'),
+                    reason: formData.get('reason')
+                };
+                
+                // Basic validation
+                if (!appointmentData.patient_id || !appointmentData.doctor_id || 
+                    !appointmentData.appointment_date || !appointmentData.appointment_time) {
+                    showNotification('Please fill in all required fields', 'error');
+                    return;
+                }
                 
                 // Show loading state
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
                 
-                // Simulate API call
-                setTimeout(() => {
-                    // Get form data
-                    const formData = new FormData(form);
-                    const appointmentData = {
-                        patientId: formData.get('patientId'),
-                        doctorId: formData.get('doctorId'),
-                        appointmentDate: formData.get('appointmentDate'),
-                        appointmentTime: formData.get('appointmentTime'),
-                        reasonForVisit: formData.get('reasonForVisit'),
-                        status: 'Scheduled',
-                        createdAt: new Date().toISOString()
-                    };
+                try {
+                    // Send data to the server
+                    const response = await fetch('/api/appointments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(appointmentData)
+                    });
                     
-                    console.log('Appointment booked:', appointmentData);
+                    const result = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Failed to book appointment');
+                    }
                     
                     // Show success message
                     showSuccessMessage();
@@ -564,11 +649,14 @@
                     // Reset form
                     form.reset();
                     
+                } catch (error) {
+                    console.error('Error booking appointment:', error);
+                    showNotification(error.message || 'Failed to book appointment. Please try again.', 'error');
+                } finally {
                     // Restore button
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
-                    
-                }, 1500);
+                    submitBtn.innerHTML = originalBtnText;
+                }
             });
             
             // Add smooth focus transitions

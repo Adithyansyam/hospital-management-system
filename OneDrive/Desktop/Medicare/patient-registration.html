@@ -110,7 +110,7 @@
     </div>
     
     <script>
-        document.getElementById('patientForm').addEventListener('submit', function(e) {
+        document.getElementById('patientForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Form validation
@@ -121,27 +121,56 @@
                 return;
             }
             
-            // Get form data
-            const formData = {
-                patientName: form.patientName.value,
-                gender: form.gender.value,
-                dob: form.dob.value,
-                bloodGroup: form.bloodGroup.value,
-                address: form.address.value,
-                phoneNumber: form.phoneNumber.value,
-                email: form.email.value,
-                medicalHistory: form.medicalHistory.value
-            };
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
             
-            // Here you would typically send the data to your server
-            console.log('Form submitted:', formData);
-            
-            // Show success message
-            alert('Patient registered successfully!');
-            
-            // Reset form
-            form.reset();
-            form.classList.remove('was-validated');
+            try {
+                // Disable submit button and show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+                
+                // Get form data
+                const formData = {
+                    patientName: form.patientName.value.trim(),
+                    gender: form.gender.value,
+                    dob: form.dob.value,
+                    bloodGroup: form.bloodGroup.value,
+                    address: form.address.value.trim(),
+                    phoneNumber: form.phoneNumber.value.trim(),
+                    email: form.email.value.trim() || null,
+                    medicalHistory: form.medicalHistory.value.trim() || null
+                };
+                
+                // Send data to server
+                const response = await fetch('http://localhost:5000/api/patients', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to register patient');
+                }
+                
+                // Show success message
+                alert('Patient registered successfully!');
+                
+                // Reset form
+                form.reset();
+                form.classList.remove('was-validated');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message || 'An error occurred while registering the patient');
+            } finally {
+                // Re-enable submit button and restore original text
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
         });
     </script>
 </body>
