@@ -114,6 +114,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Add request logging middleware
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
+
 // Serve static files from the current directory
 app.use(express.static(__dirname));
 
@@ -135,6 +141,10 @@ app.get('/appointment', (req, res) => {
 // Route for patient registration
 app.get('/patient-registration', (req, res) => {
     res.sendFile(path.join(__dirname, 'patient-registration.html'));
+});
+
+app.get('/appointment-confirmation', (req, res) => {
+    res.sendFile(path.join(__dirname, 'appointment-confirmation.html'));
 });
 
 // API endpoint to get all patients
