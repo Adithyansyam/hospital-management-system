@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>Testing APIs</h1>
+    <div>
+        <h2>Doctors:</h2>
+        <div id="doctors">Loading...</div>
+    </div>
+    <div>
+        <h2>Patients:</h2>
+        <div id="patients">Loading...</div>
+    </div>
+    
+    <script>
+        async function testAPIs() {
+            // Test doctors API
+            try {
+                const doctorsResponse = await fetch('/api/doctors/list');
+                const doctors = await doctorsResponse.json();
+                document.getElementById('doctors').innerHTML = 
+                    '<pre>' + JSON.stringify(doctors, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('doctors').innerHTML = 'Error: ' + error.message;
+            }
+            
+            // Test patients API
+            try {
+                const patientsResponse = await fetch('/api/patients/list');
+                const patients = await patientsResponse.json();
+                document.getElementById('patients').innerHTML = 
+                    '<pre>' + JSON.stringify(patients, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('patients').innerHTML = 'Error: ' + error.message;
+            }
+        }
+        
+        testAPIs();
+    </script>
+</body>
+</html>

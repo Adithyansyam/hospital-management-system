@@ -330,6 +330,31 @@ app.get('/api/doctors/list', async (req, res) => {
     }
 });
 
+// API endpoint to get list of patients (for dropdowns)
+app.get('/api/patients/list', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+        
+        // Get patients
+        const [patients] = await connection.query(
+            'SELECT patient_id, patient_name, phone_number FROM patient_registration ORDER BY patient_name'
+        );
+        
+        console.log('Patients found for dropdown:', patients);
+        res.json(patients);
+        
+    } catch (error) {
+        console.error('Error in /api/patients/list:', error);
+        res.status(500).json({ 
+            error: 'Failed to fetch patients',
+            details: error.message 
+        });
+    } finally {
+        if (connection) await connection.release();
+    }
+});
+
 // API endpoint to create a new appointment
 app.post('/api/appointments', async (req, res) => {
     const connection = await pool.getConnection();
@@ -590,8 +615,9 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-// Handle server shutdown
+// Handle server shutdown (only on explicit shutdown)
 process.on('SIGINT', async () => {
+    console.log('\nReceived SIGINT, shutting down gracefully...');
     try {
         await pool.end();
         console.log('MySQL connection pool closed');
@@ -600,4 +626,16 @@ process.on('SIGINT', async () => {
         console.error('Error closing MySQL connection pool:', error);
         process.exit(1);
     }
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    // Don't exit, just log the error
+});
+
+// Handle unhandled rejections
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    // Don't exit, just log the error
 });

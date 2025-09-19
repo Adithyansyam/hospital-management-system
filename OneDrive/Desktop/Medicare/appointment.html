@@ -424,12 +424,9 @@
     </footer>
     
     <script>
-        // Sample data
-        const samplePatients = [
-            { id: 1, name: 'John Doe', phone: '(555) 123-4567' },
-            { id: 2, name: 'Jane Smith', phone: '(555) 987-6543' },
-            { id: 3, name: 'Robert Johnson', phone: '(555) 456-7890' }
-        ];
+        // Load patients and doctors from the server
+        let doctors = [];
+        let patients = [];
 
         const timeSlots = [
             '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
@@ -437,7 +434,44 @@
         ];
 
         // Load doctors from the server
-        let doctors = [];
+        async function loadDoctors() {
+            try {
+                const response = await fetch('/api/doctors/list');
+                if (!response.ok) {
+                    throw new Error('Failed to load doctors');
+                }
+                doctors = await response.json();
+                console.log('Loaded doctors:', doctors); // Debug log
+                populateDoctorDropdown();
+            } catch (error) {
+                console.error('Error loading doctors:', error);
+                const doctorSelect = document.getElementById('doctorId');
+                if (doctorSelect) {
+                    doctorSelect.innerHTML = '<option value="">Error loading doctors</option>';
+                }
+                showNotification('Failed to load doctors. Please try again later.', 'error');
+            }
+        }
+
+        // Load patients from the server
+        async function loadPatients() {
+            try {
+                const response = await fetch('/api/patients/list');
+                if (!response.ok) {
+                    throw new Error('Failed to load patients');
+                }
+                patients = await response.json();
+                console.log('Loaded patients:', patients); // Debug log
+                populatePatientDropdown();
+            } catch (error) {
+                console.error('Error loading patients:', error);
+                const patientSelect = document.getElementById('patientId');
+                if (patientSelect) {
+                    patientSelect.innerHTML = '<option value="">Error loading patients</option>';
+                }
+                showNotification('Failed to load patients. Please try again later.', 'error');
+            }
+        }
         
         async function loadDoctors() {
             try {
@@ -455,6 +489,38 @@
                     doctorSelect.innerHTML = '<option value="">Error loading doctors</option>';
                 }
                 showNotification('Failed to load doctors. Please try again later.', 'error');
+            }
+        }
+
+        function populatePatientDropdown() {
+            try {
+                const patientSelect = document.getElementById('patientId');
+                if (!patientSelect) {
+                    console.error('Patient select element not found');
+                    return;
+                }
+                
+                patientSelect.innerHTML = '<option value="">Select a patient</option>';
+                
+                if (!patients || patients.length === 0) {
+                    console.warn('No patients found in the database');
+                    patientSelect.innerHTML = '<option value="">No patients available</option>';
+                    return;
+                }
+                
+                patients.forEach(patient => {
+                    const option = document.createElement('option');
+                    option.value = patient.patient_id;
+                    option.textContent = `${patient.patient_name} (${patient.phone_number || 'No phone'})`;
+                    patientSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error populating patient dropdown:', error);
+                const patientSelect = document.getElementById('patientId');
+                if (patientSelect) {
+                    patientSelect.innerHTML = '<option value="">Error loading patients</option>';
+                }
+                showNotification('Error loading patients. Please try again.', 'error');
             }
         }
 
@@ -533,7 +599,7 @@
             initializeForm();
         });
         
-        function populateDropdowns() {
+        async function populateDropdowns() {
             try {
                 const patientSelect = document.getElementById('patientId');
                 const timeSelect = document.getElementById('appointmentTime');
@@ -544,18 +610,16 @@
                     return;
                 }
 
-                // Clear existing options
-                patientSelect.innerHTML = '<option value="">Select a patient</option>';
+                // Clear existing options and show loading
+                patientSelect.innerHTML = '<option value="">Loading patients...</option>';
                 timeSelect.innerHTML = '<option value="">Select a time slot</option>';
                 doctorSelect.innerHTML = '<option value="">Loading doctors...</option>';
 
-                // Add sample patients
-                samplePatients.forEach(patient => {
-                    const option = document.createElement('option');
-                    option.value = patient.id;
-                    option.textContent = `${patient.name} (${patient.phone})`;
-                    patientSelect.appendChild(option);
-                });
+                // Load data from server
+                await Promise.all([
+                    loadPatients(),
+                    loadDoctors()
+                ]);
 
                 // Add time slots
                 timeSlots.forEach(time => {
@@ -565,12 +629,9 @@
                     timeSelect.appendChild(option);
                 });
 
-                // Load doctors
-                loadDoctors();
-
             } catch (error) {
-                console.error('Error populating dropdowns:', error);
-                showNotification('Error initializing form. Please refresh the page.', 'error');
+                console.error('Error in populateDropdowns:', error);
+                showNotification('Error loading data. Please refresh the page.', 'error');
             }
         }
         
