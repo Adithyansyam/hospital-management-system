@@ -58,6 +58,13 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .control-panel-btn,
         .back-btn {
             color: white;
             text-decoration: none;
@@ -71,6 +78,16 @@
             font-weight: 500;
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .control-panel-btn {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .control-panel-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .back-btn:hover {
@@ -324,10 +341,16 @@
             <div class="logo">
                 <h1>Medicare</h1>
             </div>
-            <a href="homepage.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                Back to Home
-            </a>
+            <div class="header-actions">
+                <a href="control-panel.html" class="control-panel-btn">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Control Panel</span>
+                </a>
+                <a href="homepage.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Home</span>
+                </a>
+            </div>
         </div>
     </header>
 

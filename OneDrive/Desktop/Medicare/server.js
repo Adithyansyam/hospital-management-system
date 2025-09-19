@@ -7,10 +7,11 @@ const PORT = process.env.PORT || 5000;
 
 // MySQL database configuration
 const dbConfig = {
-    host: 'localhost',
+    host: '127.0.0.1',   // Use IPv4 instead of localhost to avoid IPv6 issues
+    port: 3306,          // Explicitly specify MySQL port
     user: 'root',        // default XAMPP MySQL username
     password: '',        // default XAMPP MySQL password is empty
-    database: 'hms',     // Using 'hms' as the database name
+    database: 'hms',     // Using correct database name
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -136,7 +137,155 @@ app.get('/patient-registration', (req, res) => {
     res.sendFile(path.join(__dirname, 'patient-registration.html'));
 });
 
-// API endpoint to get list of doctors
+// API endpoint to get all patients
+app.get('/api/patients', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+        const [patients] = await connection.query(
+            'SELECT patient_id, patient_name, gender, date_of_birth, blood_group, phone_number, address, previous_medical_history FROM patient_registration ORDER BY patient_name'
+        );
+        
+        // Format patient data
+        const formattedPatients = patients.map(patient => ({
+            id: patient.patient_id,
+            patientNumber: `P${patient.patient_id}`,
+            name: patient.patient_name,
+            gender: patient.gender,
+            dateOfBirth: patient.date_of_birth,
+            bloodGroup: patient.blood_group,
+            phone: patient.phone_number,
+            email: null, // Email column doesn't exist in current table
+            address: patient.address,
+            medicalHistory: patient.previous_medical_history
+        }));
+        
+        res.json({
+            success: true,
+            data: formattedPatients
+        });
+        
+    } catch (error) {
+        console.error('Error fetching patients:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch patients',
+            error: error.message
+        });
+    } finally {
+        if (connection) await connection.release();
+    }
+});
+
+// API endpoint to get all doctors
+app.get('/api/doctors', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+        const [doctors] = await connection.query(
+            'SELECT * FROM doctor ORDER BY name'
+        );
+        
+        // Format doctor data
+        const formattedDoctors = doctors.map(doctor => ({
+            id: doctor.doctor_id,
+            doctorNumber: `D${doctor.doctor_id}`,
+            name: doctor.name,
+            email: doctor.email,
+            phone: doctor.phone_number,
+            department: doctor.department,
+            specialization: doctor.specialization,
+            qualification: doctor.qualification,
+            experienceYears: doctor.experience_years,
+            consultationFee: doctor.consultation_fee,
+            bio: doctor.bio,
+            address: `${doctor.address}, ${doctor.city}, ${doctor.state} ${doctor.pincode}`,
+            availableDays: doctor.available_days,
+            availableTimeSlot: doctor.available_time_slot
+        }));
+        
+        res.json({
+            success: true,
+            data: formattedDoctors
+        });
+        
+    } catch (error) {
+        console.error('Error fetching doctors:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch doctors',
+            error: error.message
+        });
+    } finally {
+        if (connection) await connection.release();
+    }
+});
+
+// API endpoint to get all appointments
+app.get('/api/appointments', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+        
+        // Get all appointments with patient and doctor details
+        const [appointments] = await connection.query(`
+            SELECT 
+                a.appointment_id,
+                a.patient_id,
+                p.patient_name,
+                a.doctor_id,
+                d.name as doctor_name,
+                a.appointment_date,
+                a.appointment_time,
+                a.reason_for_visit,
+                a.status,
+                a.created_at
+            FROM 
+                appointment a
+            JOIN 
+                patient_registration p ON a.patient_id = p.patient_id
+            JOIN 
+                doctor d ON a.doctor_id = d.doctor_id
+            ORDER BY 
+                a.appointment_date DESC, a.appointment_time DESC
+        `);
+        
+        // Format appointment data
+        const formattedAppointments = appointments.map(appt => ({
+            id: appt.appointment_id,
+            patient: {
+                id: appt.patient_id,
+                name: appt.patient_name
+            },
+            doctor: {
+                id: appt.doctor_id,
+                name: appt.doctor_name
+            },
+            date: appt.appointment_date,
+            time: appt.appointment_time,
+            reason: appt.reason_for_visit,
+            status: appt.status,
+            createdAt: appt.created_at
+        }));
+        
+        res.json({
+            success: true,
+            data: formattedAppointments
+        });
+        
+    } catch (error) {
+        console.error('Error fetching appointments:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch appointments',
+            error: error.message
+        });
+    } finally {
+        if (connection) await connection.release();
+    }
+});
+
+// API endpoint to get list of doctors (for dropdowns)
 app.get('/api/doctors/list', async (req, res) => {
     let connection;
     try {
@@ -338,7 +487,6 @@ app.post('/api/patients', async (req, res) => {
     } finally {
         if (connection) await connection.release();
     }
-    }
 });
 
 // API endpoint to handle doctor registration
@@ -366,8 +514,15 @@ app.post('/api/doctors', async (req, res) => {
             available_time_slot = ''
         } = req.body;
         
+        // Debug log to see what we're receiving
+        console.log('Received doctor data:', {
+            name, email, phone_number, department, specialization, qualification,
+            experience_years, consultation_fee, bio, address, city, state, 
+            pincode, available_days, available_time_slot
+        });
+        
         // Generate a unique doctor ID
-        const doctorId = generateUniqueId('doctor', 'doctor_id');
+        const doctorId = await generateUniqueId('doctor', 'doctor_id');
 
         // Check if email or phone already exists
         const [existing] = await connection.query(
@@ -388,7 +543,7 @@ app.post('/api/doctors', async (req, res) => {
                 doctor_id, name, email, phone_number, department, specialization,
                 qualification, experience_years, consultation_fee, bio,
                 address, city, state, pincode, available_days, available_time_slot
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 doctorId, name, email, phone_number, department, specialization,
                 qualification, experience_years, consultation_fee, bio,
