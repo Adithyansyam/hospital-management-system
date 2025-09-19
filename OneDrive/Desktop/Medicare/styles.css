@@ -2,15 +2,14 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
-    background: linear-gradient(135deg, #ffffff, #0083b0);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: linear-gradient(135deg, #f8fbff 0%, #e8f4fd 100%);
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
 }
 
 .login-container {
@@ -207,50 +206,78 @@ body {
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Patient Registration Form */
+/* Modern Doctor Registration Form */
 .registration-main {
     padding: 2rem;
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
     width: 100%;
+    min-height: calc(100vh - 140px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .registration-container {
     background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 131, 176, 0.15);
+    border: 1px solid rgba(0, 131, 176, 0.1);
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 800px;
+    backdrop-filter: blur(10px);
+}
+
+.registration-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0083b0, #0066cc, #2ecc71);
 }
 
 .registration-form h2 {
-    color: #0083b0;
-    margin-bottom: 0.5rem;
-    text-align: center;
+    color: #1a1a1a;
+    margin: 0 0 0.5rem 0;
+    text-align: left;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .form-subtitle {
-    color: #666;
-    text-align: center;
-    margin-bottom: 2rem;
+    color: #6b7280;
+    text-align: left;
+    margin: 0 0 2.5rem 0;
     font-size: 1.1rem;
+    font-weight: 400;
 }
 
 .form-row {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
 }
 
 .form-group {
-    flex: 1;
-    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #444;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.95rem;
+    letter-spacing: 0.025em;
 }
 
 .form-group input[type="text"],
@@ -260,19 +287,57 @@ body {
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
     font-size: 1rem;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: white;
+    color: #1f2937;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.form-group input:focus,
+.form-group input[type="text"]:hover,
+.form-group input[type="date"]:hover,
+.form-group input[type="tel"]:hover,
+.form-group input[type="email"]:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="date"]:focus,
+.form-group input[type="tel"]:focus,
+.form-group input[type="email"]:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
     border-color: #0083b0;
-    box-shadow: 0 0 0 2px rgba(0, 131, 176, 0.2);
+    box-shadow: 0 0 0 4px rgba(0, 131, 176, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Modern Select Styling */
+.form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    cursor: pointer;
 }
 
 .radio-group {
@@ -299,42 +364,71 @@ body {
 
 .form-actions {
     display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 2rem;
+    justify-content: flex-start;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #f3f4f6;
 }
 
 .submit-btn, .reset-btn {
-    padding: 0.75rem 1.5rem;
+    padding: 1rem 2rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     transition: all 0.3s ease;
+    min-width: 160px;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .submit-btn {
-    background: #2ecc71;
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
     color: white;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
 }
 
 .submit-btn:hover {
-    background: #27ae60;
     transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
 }
 
 .reset-btn {
-    background: #e74c3c;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
     color: white;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
 }
 
 .reset-btn:hover {
-    background: #c0392b;
     transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+}
+
+.reset-btn:active {
+    transform: translateY(0);
+}
+
+/* Button loading state */
+.submit-btn:disabled,
+.reset-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.submit-btn:disabled:hover,
+.reset-btn:disabled:hover {
+    box-shadow: none;
 }
 
 .back-btn {
@@ -353,7 +447,91 @@ body {
     background: rgba(0, 131, 176, 0.1);
 }
 
+/* Modern Form Animations */
+.form-group {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+.form-group:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form validation styles */
+.form-group input:invalid:not(:placeholder-shown) {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1);
+}
+
+.form-group input:valid:not(:placeholder-shown) {
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1);
+}
+
+/* Success message styling */
+.success-message {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+/* Error message styling */
+.error-message {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
 /* Responsive adjustments */
+@media (max-width: 768px) {
+    .registration-main {
+        padding: 1rem;
+    }
+    
+    .registration-container {
+        padding: 2rem;
+        border-radius: 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .submit-btn, .reset-btn {
+        width: 100%;
+    }
+}
+
 @media (max-width: 600px) {
     .action-buttons {
         flex-direction: column;
@@ -364,6 +542,15 @@ body {
     .action-btn {
         width: 100%;
         max-width: 280px;
+    }
+    
+    .registration-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .registration-form h2 {
+        font-size: 1.75rem;
     }
 }
 

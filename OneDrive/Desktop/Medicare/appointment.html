@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - Medicare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fbff 0%, #e8f4fd 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0083b0 0%, #0066cc 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 20px rgba(0, 131, 176, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="80" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 3rem;
+        }
+
+        /* Appointment Form */
+        .appointment-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0, 131, 176, 0.08);
+            border: 1px solid rgba(0, 131, 176, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .appointment-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0083b0, #0066cc, #2ecc71);
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .required {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 1rem 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #0083b0;
+            box-shadow: 0 0 0 4px rgba(0, 131, 176, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            justify-content: center;
+            min-width: 140px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+
+        /* Appointments List */
+        .appointments-list {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0, 131, 176, 0.08);
+            border: 1px solid rgba(0, 131, 176, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .appointments-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .appointments-title i {
+            color: #0083b0;
+            font-size: 1.25rem;
+        }
+
+        .no-appointments {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6b7280;
+        }
+
+        .no-appointments i {
+            font-size: 3rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .no-appointments p {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f8fafc;
+            padding: 2rem 0;
+            text-align: center;
+            color: #6b7280;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 3rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .appointments-list {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .main-content {
+                padding: 2rem 1rem;
+            }
+
+            .appointment-section,
+            .appointments-list {
+                padding: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+
+            .back-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .appointment-section,
+            .appointments-list {
+                padding: 1rem;
+            }
+        }
+
+        /* Animation for form elements */
+        .form-group {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loading state for buttons */
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn:disabled:hover {
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>Medicare</h1>
+            </div>
+            <a href="homepage.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="appointment-section">
+            <div class="section-header">
+                <h2 class="section-title">Book an Appointment</h2>
+                <p class="section-subtitle">Schedule your visit with ease - just fill in the details below</p>
+            </div>
+
+            <form id="appointmentForm" class="appointment-form">
+                <div class="form-grid">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientId" class="form-label">
+                                Patient <span class="required">*</span>
+                            </label>
+                            <select id="patientId" name="patientId" class="form-select" required>
+                                <option value="">Choose a patient</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="doctorId" class="form-label">
+                                Doctor <span class="required">*</span>
+                            </label>
+                            <select id="doctorId" name="doctorId" class="form-select" required>
+                                <option value="">Choose a doctor</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appointmentDate" class="form-label">
+                                Appointment Date <span class="required">*</span>
+                            </label>
+                            <input type="date" id="appointmentDate" name="appointmentDate" class="form-input" required min="2025-09-19">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appointmentTime" class="form-label">
+                                Preferred Time <span class="required">*</span>
+                            </label>
+                            <select id="appointmentTime" name="appointmentTime" class="form-select" required>
+                                <option value="">Select time slot</option>
+                                <option value="09:00:00">09:00 AM</option>
+                                <option value="10:00:00">10:00 AM</option>
+                                <option value="11:00:00">11:00 AM</option>
+                                <option value="12:00:00">12:00 PM</option>
+                                <option value="14:00:00">02:00 PM</option>
+                                <option value="15:00:00">03:00 PM</option>
+                                <option value="16:00:00">04:00 PM</option>
+                                <option value="17:00:00">05:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reasonForVisit" class="form-label">
+                            Reason for Visit <span class="required">*</span>
+                        </label>
+                        <textarea id="reasonForVisit" name="reasonForVisit" class="form-textarea" required
+                                 placeholder="Please describe the reason for your visit, symptoms, or any specific concerns..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-calendar-check"></i>
+                        Book Appointment
+                    </button>
+                    <button type="reset" class="btn btn-secondary">
+                        <i class="fas fa-undo"></i>
+                        Clear Form
+                    </button>
+                </div>
+            </form>
+        </section>
+        
+        <aside class="appointments-list">
+            <h3 class="appointments-title">
+                <i class="fas fa-clock"></i>
+                Upcoming Appointments
+            </h3>
+            <div class="appointment-cards" id="appointmentCards">
+                <div class="no-appointments">
+                    <i class="far fa-calendar-check"></i>
+                    <p>No upcoming appointments</p>
+                </div>
+            </div>
+        </aside>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2025 Medicare. All rights reserved. | Your health, our priority.</p>
+    </footer>
+    
+    <script>
+        // Sample data
+        const samplePatients = [
+            { id: 1, name: 'John Doe', phone: '(555) 123-4567' },
+            { id: 2, name: 'Jane Smith', phone: '(555) 987-6543' },
+            { id: 3, name: 'Robert Johnson', phone: '(555) 555-1234' },
+            { id: 4, name: 'Emily Davis', phone: '(555) 246-8135' }
+        ];
+        
+        const sampleDoctors = [
+            { id: 1, name: 'Dr. Sarah Smith', department: 'Cardiology', specialty: 'Heart Specialist' },
+            { id: 2, name: 'Dr. Michael Johnson', department: 'Neurology', specialty: 'Brain & Nerve Specialist' },
+            { id: 3, name: 'Dr. Lisa Williams', department: 'Pediatrics', specialty: 'Child Care Specialist' },
+            { id: 4, name: 'Dr. David Brown', department: 'Orthopedics', specialty: 'Bone & Joint Specialist' }
+        ];
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            populateDropdowns();
+            setMinDate();
+            initializeForm();
+        });
+        
+        function populateDropdowns() {
+            // Populate patient dropdown
+            const patientSelect = document.getElementById('patientId');
+            samplePatients.forEach(patient => {
+                const option = document.createElement('option');
+                option.value = patient.id;
+                option.textContent = `${patient.name} - ${patient.phone}`;
+                patientSelect.appendChild(option);
+            });
+            
+            // Populate doctor dropdown
+            const doctorSelect = document.getElementById('doctorId');
+            sampleDoctors.forEach(doctor => {
+                const option = document.createElement('option');
+                option.value = doctor.id;
+                option.textContent = `${doctor.name} (${doctor.department})`;
+                doctorSelect.appendChild(option);
+            });
+        }
+        
+        function setMinDate() {
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const yyyy = today.getFullYear();
+            document.getElementById('appointmentDate').min = `${yyyy}-${mm}-${dd}`;
+        }
+        
+        function initializeForm() {
+            const form = document.getElementById('appointmentForm');
+            
+            // Add loading state to submit button on form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const submitBtn = form.querySelector('.btn-primary');
+                const originalText = submitBtn.innerHTML;
+                
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
+                
+                // Simulate API call
+                setTimeout(() => {
+                    // Get form data
+                    const formData = new FormData(form);
+                    const appointmentData = {
+                        patientId: formData.get('patientId'),
+                        doctorId: formData.get('doctorId'),
+                        appointmentDate: formData.get('appointmentDate'),
+                        appointmentTime: formData.get('appointmentTime'),
+                        reasonForVisit: formData.get('reasonForVisit'),
+                        status: 'Scheduled',
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    console.log('Appointment booked:', appointmentData);
+                    
+                    // Show success message
+                    showSuccessMessage();
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    // Restore button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    
+                }, 1500);
+            });
+            
+            // Add smooth focus transitions
+            const formInputs = form.querySelectorAll('.form-input, .form-select, .form-textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            });
+        }
+        
+        function showSuccessMessage() {
+            // Create success notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 2rem;
+                right: 2rem;
+                background: linear-gradient(135deg, #2ecc71, #27ae60);
+                color: white;
+                padding: 1.5rem 2rem;
+                border-radius: 12px;
+                box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3);
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            notification.innerHTML = `
+                <i class="fas fa-check-circle" style="font-size: 1.25rem;"></i>
+                <div>
+                    <div style="font-weight: 600;">Appointment Booked Successfully!</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">You will receive a confirmation shortly.</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+        
+        // Add CSS animations for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
