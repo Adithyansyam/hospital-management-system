@@ -368,7 +368,7 @@
                             <label for="patientId" class="form-label">
                                 Patient <span class="required">*</span>
                             </label>
-                            <select id="patientId" name="patientId" class="form-select" required>
+                            <select id="patientId" name="patient" class="form-select" required>
                                 <option value="">Choose a patient</option>
                             </select>
                         </div>
@@ -377,7 +377,7 @@
                             <label for="doctorId" class="form-label">
                                 Doctor <span class="required">*</span>
                             </label>
-                            <select id="doctorId" name="doctorId" class="form-select" required>
+                            <select id="doctorId" name="doctor" class="form-select" required>
                                 <option value="">Choose a doctor</option>
                             </select>
                         </div>
@@ -429,8 +429,8 @@
         let patients = [];
 
         const timeSlots = [
-            '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
-            '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
+            '09:00', '10:00', '11:00', '12:00',
+            '14:00', '15:00', '16:00', '17:00'
         ];
 
         // Load patients from the server
@@ -555,31 +555,54 @@
 
         // Show notification function
         function showNotification(message, type = 'success') {
+            const container = document.querySelector('.notification-container');
+            if (!container) {
+                console.error('Notification container not found');
+                return;
+            }
+            
             const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-                <button class="notification-close">&times;</button>
+            notification.style.cssText = `
+                background: ${type === 'success' ? 'linear-gradient(135deg, #2ecc71, #27ae60)' : 
+                            type === 'error' ? 'linear-gradient(135deg, #e74c3c, #c0392b)' : 
+                            'linear-gradient(135deg, #f39c12, #e67e22)'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                margin-bottom: 0.5rem;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                animation: slideInRight 0.3s ease;
+                pointer-events: auto;
+                position: relative;
             `;
             
-            // Add to the notification container
-            const container = document.querySelector('.notification-container');
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                                type === 'error' ? 'fa-exclamation-circle' : 
+                                'fa-exclamation-triangle'}"></i>
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" style="
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 1.2rem;
+                    cursor: pointer;
+                    margin-left: auto;
+                    padding: 0;
+                ">&times;</button>
+            `;
+            
             container.appendChild(notification);
             
             // Auto-remove after 5 seconds
             setTimeout(() => {
-                notification.classList.add('hide');
-                setTimeout(() => notification.remove(), 300);
+                if (notification.parentElement) {
+                    notification.remove();
+                }
             }, 5000);
-            
-            // Close button
-            notification.querySelector('.notification-close').addEventListener('click', () => {
-                notification.classList.add('hide');
-                setTimeout(() => notification.remove(), 300);
-            });
         }
 
         // Initialize the page
@@ -590,12 +613,20 @@
             if (!document.querySelector('.notification-container')) {
                 const container = document.createElement('div');
                 container.className = 'notification-container';
+                container.style.cssText = `
+                    position: fixed;
+                    top: 1rem;
+                    right: 1rem;
+                    z-index: 1000;
+                    pointer-events: none;
+                `;
                 document.body.appendChild(container);
             }
             
             setMinDate();
             console.log('About to call populateDropdowns');
             populateDropdowns();
+            console.log('About to call initializeForm');
             initializeForm();
         });
         
@@ -662,6 +693,8 @@
                     appointment_time: formData.get('appointmentTime'),
                     reason: formData.get('reason')
                 };
+                
+                console.log('Form data collected:', appointmentData);
                 
                 // Basic validation
                 if (!appointmentData.patient_id || !appointmentData.doctor_id || 
@@ -798,7 +831,7 @@
         // Add CSS animations for notifications
         const style = document.createElement('style');
         style.textContent = `
-            @keyframes slideIn {
+            @keyframes slideInRight {
                 from {
                     transform: translateX(100%);
                     opacity: 0;

@@ -523,19 +523,19 @@
                 appointments.forEach(appointment => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>A${appointment.appointment_id.toString().padStart(4, '0')}</td>
-                        <td>${appointment.patient_name || 'N/A'}</td>
-                        <td>${appointment.doctor_name || 'N/A'}</td>
-                        <td>${new Date(appointment.appointment_date).toLocaleDateString()}</td>
-                        <td>${appointment.appointment_time || ''}</td>
-                        <td><span class="status ${appointment.status === 'completed' ? 'active' : 'inactive'}">
+                        <td>A${appointment.id.toString().padStart(4, '0')}</td>
+                        <td>${appointment.patient.name || 'N/A'}</td>
+                        <td>${appointment.doctor.name || 'N/A'}</td>
+                        <td>${new Date(appointment.date).toLocaleDateString()}</td>
+                        <td>${appointment.time || ''}</td>
+                        <td><span class="status ${appointment.status === 'Completed' ? 'active' : 'inactive'}">
                             ${appointment.status || 'Scheduled'}
                         </span></td>
                         <td class="action-btns">
-                            <button class="btn btn-primary btn-sm" onclick="viewAppointment(${appointment.appointment_id})">
+                            <button class="btn btn-primary btn-sm" onclick="viewAppointment(${appointment.id})">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="cancelAppointment(${appointment.appointment_id})">
+                            <button class="btn btn-danger btn-sm" onclick="cancelAppointment(${appointment.id})">
                                 <i class="fas fa-times"></i>
                             </button>
                         </td>
