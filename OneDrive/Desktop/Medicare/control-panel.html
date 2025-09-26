@@ -481,18 +481,18 @@
                 doctors.forEach(doctor => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>D${doctor.doctor_id}</td>
+                        <td>${doctor.doctorNumber}</td>
                         <td>${doctor.name}</td>
                         <td>${doctor.department || '-'}</td>
                         <td>${doctor.specialization || '-'}</td>
-                        <td>${doctor.phone_number || '-'}</td>
+                        <td>${doctor.phone || '-'}</td>
                         <td>${doctor.email || '-'}</td>
                         <td><span class="status active">Active</span></td>
                         <td class="action-btns">
-                            <button class="btn btn-primary btn-sm" onclick="viewDoctor(${doctor.doctor_id})">
+                            <button class="btn btn-primary btn-sm" onclick="viewDoctor(${doctor.id})">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteDoctor(${doctor.doctor_id})">
+                            <button class="btn btn-danger btn-sm" onclick="deleteDoctor(${doctor.id})">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
