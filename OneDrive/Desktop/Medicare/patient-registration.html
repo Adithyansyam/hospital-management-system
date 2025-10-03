@@ -4,9 +4,309 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Registration - Medicare</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            height: 100vh;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .dashboard-header .logo h1 {
+            color: white;
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+        
+        .header-actions, .user-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .control-panel-btn, .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .control-panel-btn:hover, .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .registration-main {
+            flex: 1;
+            padding: 2rem;
+            background: linear-gradient(180deg, #f8fbff 0%, #e8f4fd 100%);
+            overflow-y: auto;
+        }
+        
+        .registration-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.1);
+            border: 1px solid #e3f2fd;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .registration-container h2 {
+            color: #1976d2;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+        
+        .form-subtitle {
+            color: #6c757d;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: #1976d2;
+            font-size: 0.95rem;
+        }
+        
+        .required {
+            color: #e74c3c;
+            margin-left: 2px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e3f2fd;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2196f3;
+            box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.1);
+            background: #f8fbff;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border: 2px solid #e3f2fd;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .radio-label:hover {
+            background: #f8fbff;
+            border-color: #2196f3;
+        }
+        
+        .radio-label input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e3f2fd;
+        }
+        
+        @media (min-width: 576px) {
+            .form-actions {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+        
+        .submit-btn, .reset-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 52px;
+            text-decoration: none;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .reset-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+        
+        .submit-btn:disabled, .reset-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .registration-main {
+                padding: 1rem;
+            }
+            
+            .registration-container {
+                padding: 1.5rem;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .registration-container h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Alert Styles */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .alert.success {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+        }
+        
+        .alert.error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-container">
@@ -163,7 +463,7 @@
                 }
                 
                 // Show success message
-                alert('Patient registered successfully!');
+                showAlert('Patient registered successfully! Patient ID: ' + data.patientNumber, 'success');
                 
                 // Reset form
                 form.reset();
@@ -171,13 +471,39 @@
                 
             } catch (error) {
                 console.error('Error:', error);
-                alert(error.message || 'An error occurred while registering the patient');
+                showAlert(error.message || 'An error occurred while registering the patient', 'error');
             } finally {
                 // Re-enable submit button and restore original text
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;
             }
         });
+        
+        // Alert function
+        function showAlert(message, type = 'success') {
+            // Remove any existing alerts
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Create new alert
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(alert);
+            
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                if (alert && alert.parentNode) {
+                    alert.remove();
+                }
+            }, 4000);
+        }
     </script>
 </body>
 </html>
